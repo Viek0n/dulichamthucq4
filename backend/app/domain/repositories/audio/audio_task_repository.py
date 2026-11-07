@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from app.domain.entities.audio_task import AudioTask
+from backend.app.domain.entities.audio_localize.audio_task import AudioTask
 
 class AudioTaskRepository(ABC):
     @abstractmethod

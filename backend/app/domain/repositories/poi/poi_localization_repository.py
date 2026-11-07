@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from app.domain.entities.poi_localization import POILocalization
+from backend.app.domain.entities.poi.poi_localization import POILocalization
 
 class POILocalizationRepository(ABC):
     @abstractmethod

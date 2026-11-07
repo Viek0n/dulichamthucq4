@@ -1,4 +1,4 @@
-from app.domain.enumerators.language import Language
+from backend.app.domain.enumerators.audio.language import Language
 
 EDGE_TTS_DEFAULT_VOICE: dict[Language, str] = {
     Language.ENGLISH: "en-US-EmmaNeural",
