@@ -1,12 +1,21 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 
-from app.presentation.routers.poi_router import router as poi_router
+from app.infrastructure.data.mongo import (
+    client,
+    close_mongodb,
+)
 
-app = FastAPI(title="POI Services API")
 
-app.include_router(poi_router)
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    client.admin.command("ping")
+    print("MongoDB connected successfully")
+
+    yield
+
+    close_mongodb()
 
 
-@app.get("/")
-def health_check():
-    return {"status": "ok"}
+app = FastAPI(lifespan=lifespan)

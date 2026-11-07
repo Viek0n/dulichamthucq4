@@ -4,7 +4,7 @@ from typing import Any
 from app.domain.enumerators.review_status import ReviewStatus
 
 @dataclass
-class POI_Submission:
+class POISubmission:
     _id: str
     slug: str
     proposed_change: dict[str, Any]

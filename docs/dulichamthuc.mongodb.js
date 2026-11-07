@@ -12,6 +12,7 @@ poiDB.createCollection("POI", {
       required: [
         "slug",
         "name",
+        'address',
         "open_at",
         "close_at",
         "contact",
@@ -419,7 +420,8 @@ userDB.createCollection("roles", {
       required: [
         "slug",
         "name",
-        "permissions"
+        "permissions",
+        "priority"
       ],
       properties: {
         slug:{
@@ -436,6 +438,10 @@ userDB.createCollection("roles", {
             items: {
                 bsonType: "string"
             }
+        },
+        priority:{
+            bsonType: "int",
+            description: "độ ưu tiên"
         }
       }
     }
@@ -444,6 +450,7 @@ userDB.createCollection("roles", {
   validationAction: "error"
 });
 userDB.roles.createIndex({ slug: 1 }, { unique: true });
+userDB.roles.createIndex({ priority: 1 });
 
 // Audit log indexes
 userDB.createCollection("audit_logs", {

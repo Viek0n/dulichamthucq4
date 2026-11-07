@@ -1,6 +1,5 @@
 from pydantic import BaseModel
 
-
 class POIResponse(BaseModel):
     slug: str
     name: str
@@ -12,3 +11,4 @@ class POIResponse(BaseModel):
     latitude: float
     longitude: float
     trigger_radius: float
+    poi_owner: str

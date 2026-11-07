@@ -1,9 +1,12 @@
-from app.application.use_cases.create_poi import CreatePOI
+from fastapi import Depends
+from pymongo.database import Database
+
+from app.infrastructure.data.mongo import get_database
 from app.infrastructure.data.repositories.mongo_poi_repository import (
     MongoPOIRepository,
 )
 
-
-def get_create_poi_use_case() -> CreatePOI:
-    repository = MongoPOIRepository()
-    return CreatePOI(repository)
+def get_poi_repository(
+    database: Database = Depends(get_database),
+) -> MongoPOIRepository:
+    return MongoPOIRepository(database["POI"])

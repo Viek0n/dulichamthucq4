@@ -1,4 +1,5 @@
 from bson import ObjectId
+from pymongo.collection import Collection
 
 from app.domain.entities.poi import POI
 from app.domain.repositories.poi_repository import POIRepository
@@ -6,7 +7,7 @@ from app.domain.repositories.poi_repository import POIRepository
 
 class MongoPOIRepository(POIRepository):
 
-    def __init__(self, collection):
+    def __init__(self, collection: Collection):
         self.collection = collection
 
     def create(self, poi: POI) -> POI:
