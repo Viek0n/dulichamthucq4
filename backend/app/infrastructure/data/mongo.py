@@ -4,7 +4,7 @@ from pymongo.database import Database
 from app.infrastructure.config import settings
 
 
-client = MongoClient(settings.mongodb_url)
+client = MongoClient(settings.mongodb_uri)
 
 database: Database = client[settings.mongodb_database]
 

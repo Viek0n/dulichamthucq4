@@ -1,11 +1,7 @@
-const poiDB = db.getSiblingDB("poi-service-db");
-const audioDB = db.getSiblingDB("audio-service-db");
-const offlineDB = db.getSiblingDB("offline-service-db");
-const userDB = db.getSiblingDB("user-service-db");
+const dulichamthuc = db.getSiblingDB("dulichamthuc");
 
-//////////////////POIDB//////////////////
 //POI
-poiDB.createCollection("POI", {
+dulichamthuc.createCollection("POI", {
   validator: {
     $jsonSchema: {
       bsonType: "object",
@@ -79,11 +75,11 @@ poiDB.createCollection("POI", {
   validationLevel: "strict",
   validationAction: "error"
 });
-poiDB.POI.createIndex({ slug: 1 }, { unique: true });
-poiDB.POI.createIndex({ latitude: 1, longitude: 1 });
+dulichamthuc.POI.createIndex({ slug: 1 }, { unique: true });
+dulichamthuc.POI.createIndex({ latitude: 1, longitude: 1 });
 
 // Menu item
-poiDB.createCollection("menu_items", {
+dulichamthuc.createCollection("menu_items", {
   validator: {
     $jsonSchema: {
       bsonType: "object",
@@ -113,7 +109,7 @@ poiDB.createCollection("menu_items", {
 });
 
 // Submission
-poiDB.createCollection("poi_submissions", {
+dulichamthuc.createCollection("poi_submissions", {
   validator: {
     $jsonSchema: {
       bsonType: "object",
@@ -166,13 +162,12 @@ poiDB.createCollection("poi_submissions", {
   validationLevel: "strict",
   validationAction: "error"
 });
-poiDB.poi_submissions.createIndex({ review_status: 1 });
-poiDB.poi_submissions.createIndex({ submissed_by: 1 });
-poiDB.poi_submissions.createIndex({ slug: 1 }, { unique: true });
+dulichamthuc.poi_submissions.createIndex({ review_status: 1 });
+dulichamthuc.poi_submissions.createIndex({ submissed_by: 1 });
+dulichamthuc.poi_submissions.createIndex({ slug: 1 }, { unique: true });
 
-//////////////////AUDIODB//////////////////
 // Localization
-audioDB.createCollection("poi_localizations", {
+dulichamthuc.createCollection("poi_localizations", {
   validator: {
     $jsonSchema: {
       bsonType: "object",
@@ -204,13 +199,13 @@ audioDB.createCollection("poi_localizations", {
   validationLevel: "strict",
   validationAction: "error"
 });
-audioDB.poi_localizations.createIndex(
+dulichamthuc.poi_localizations.createIndex(
   { poi_id: 1, lang: 1 },
   { unique: true }
 );
 
 // Audio task
-audioDB.createCollection("audio_tasks", {
+dulichamthuc.createCollection("audio_tasks", {
   validator: {
     $jsonSchema: {
       bsonType: "object",
@@ -260,11 +255,10 @@ audioDB.createCollection("audio_tasks", {
   validationLevel: "strict",
   validationAction: "error"
 });
-audioDB.audio_tasks.createIndex({ status: 1, created_at: -1 });
+dulichamthuc.audio_tasks.createIndex({ status: 1, created_at: -1 });
 
-//////////////////USERDB//////////////////
 // Admin user
-userDB.createCollection("admin_users", {
+dulichamthuc.createCollection("admin_users", {
   validator: {
     $jsonSchema: {
       bsonType: "object",
@@ -327,11 +321,11 @@ userDB.createCollection("admin_users", {
   validationLevel: "strict",
   validationAction: "error"
 });
-userDB.admin_users.createIndex({ email_lookup_hash: 1 }, { unique: true });
-userDB.admin_users.createIndex({ slug: 1 }, { unique: true });
+dulichamthuc.admin_users.createIndex({ email_lookup_hash: 1 }, { unique: true });
+dulichamthuc.admin_users.createIndex({ slug: 1 }, { unique: true });
 
 // Notification
-userDB.createCollection("owner_notifications", {
+dulichamthuc.createCollection("owner_notifications", {
     validator: {
         $jsonSchema: {
             bsonType: "object",
@@ -364,10 +358,10 @@ userDB.createCollection("owner_notifications", {
     validationLevel: "strict",
     validationAction: "error"
 });
-userDB.owner_notifications.createIndex({ receiver_id: 1, is_read: 1 });
+dulichamthuc.owner_notifications.createIndex({ receiver_id: 1, is_read: 1 });
 
 // Owner registration
-userDB.createCollection("poi_owner_registrations", {
+dulichamthuc.createCollection("poi_owner_registrations", {
   validator: {
     $jsonSchema: {
       bsonType: "object",
@@ -410,10 +404,10 @@ userDB.createCollection("poi_owner_registrations", {
   validationLevel: "strict",
   validationAction: "error"
 });
-userDB.poi_owner_registrations.createIndex({ sender_id: 1 });
+dulichamthuc.poi_owner_registrations.createIndex({ sender_id: 1 });
 
 // Role
-userDB.createCollection("roles", {
+dulichamthuc.createCollection("roles", {
   validator: {
     $jsonSchema: {
       bsonType: "object",
@@ -449,11 +443,11 @@ userDB.createCollection("roles", {
   validationLevel: "strict",
   validationAction: "error"
 });
-userDB.roles.createIndex({ slug: 1 }, { unique: true });
-userDB.roles.createIndex({ priority: 1 });
+dulichamthuc.roles.createIndex({ slug: 1 }, { unique: true });
+dulichamthuc.roles.createIndex({ priority: 1 });
 
 // Audit log indexes
-userDB.createCollection("audit_logs", {
+dulichamthuc.createCollection("audit_logs", {
   validator: {
     $jsonSchema: {
       bsonType: "object",
@@ -596,6 +590,4 @@ userDB.createCollection("audit_logs", {
   validationLevel: "strict",
   validationAction: "error"
 });
-userDB.audit_logs.createIndex({ by_admin_id: 1, timestamp: -1 });
-
-print("POI database setup completed.");
+dulichamthuc.audit_logs.createIndex({ by_admin_id: 1, timestamp: -1 });
