@@ -3,16 +3,18 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Setup All Services",
-      "dependsOrder": "sequence",
-      "dependsOn": [
-        "Setup Frontend",
-        "Setup User Service",
-        "Setup POI Service",
-        "Setup Audio Service",
-        "Setup Offline Package Service"
-      ],
-      "problemMatcher": []
+      "label": "Setup Backend",
+      "type": "shell",
+      "command": "if not exist .venv\\Scripts\\python.exe python -m venv .venv && .venv\\Scripts\\python.exe -m pip install -r requirements.txt",
+      "options": {
+        "cwd": "${workspaceFolder}/backend",
+        "shell": {
+          "executable": "cmd.exe",
+          "args": ["/d", "/c"]
+        }
+      },
+      "problemMatcher": [],
+      "group": "build"
     },
     {
       "label": "Setup Frontend",
@@ -21,71 +23,32 @@
       "options": {
         "cwd": "${workspaceFolder}/frontend"
       },
-      "problemMatcher": []
+      "problemMatcher": [],
+      "group": "build"
     },
     {
-      "label": "Setup User Service",
+      "label": "Start Backend",
       "type": "shell",
-      "command": "if (!(Test-Path '.venv/Scripts/python.exe')) { python -m venv .venv }; & '.venv/Scripts/python.exe' -m pip install -r requirements.txt",
+      "command": ".venv\\Scripts\\python.exe -m uvicorn app.main:app --reload --port 8000",
       "options": {
-        "cwd": "${workspaceFolder}/backend/user-service",
+        "cwd": "${workspaceFolder}/backend",
         "shell": {
-          "executable": "powershell.exe",
-          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+          "executable": "cmd.exe",
+          "args": ["/d", "/c"]
         }
       },
-      "problemMatcher": []
-    },
-    {
-      "label": "Setup POI Service",
-      "type": "shell",
-      "command": "if (!(Test-Path '.venv/Scripts/python.exe')) { python -m venv .venv }; & '.venv/Scripts/python.exe' -m pip install -r requirements.txt",
-      "options": {
-        "cwd": "${workspaceFolder}/backend/poi-service",
-        "shell": {
-          "executable": "powershell.exe",
-          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^(.*)$",
+          "message": 1
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*Uvicorn running.*",
+          "endsPattern": ".*Application startup complete.*"
         }
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Setup Audio Service",
-      "type": "shell",
-      "command": "if (!(Test-Path '.venv/Scripts/python.exe')) { python -m venv .venv }; & '.venv/Scripts/python.exe' -m pip install -r requirements.txt",
-      "options": {
-        "cwd": "${workspaceFolder}/backend/audio-service",
-        "shell": {
-          "executable": "powershell.exe",
-          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
-        }
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Setup Offline Package Service",
-      "type": "shell",
-      "command": "if (!(Test-Path '.venv/Scripts/python.exe')) { python -m venv .venv }; & '.venv/Scripts/python.exe' -m pip install -r requirements.txt",
-      "options": {
-        "cwd": "${workspaceFolder}/backend/offline-package-service",
-        "shell": {
-          "executable": "powershell.exe",
-          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
-        }
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Start All Services",
-      "dependsOrder": "parallel",
-      "dependsOn": [
-        "Start Frontend",
-        "Start User Service",
-        "Start POI Service",
-        "Start Audio Service",
-        "Start Offline Package Service"
-      ],
-      "problemMatcher": []
+      }
     },
     {
       "label": "Start Frontend",
@@ -95,47 +58,17 @@
         "cwd": "${workspaceFolder}/frontend"
       },
       "isBackground": true,
-      "problemMatcher": []
-    },
-    {
-      "label": "Start User Service",
-      "type": "shell",
-      "command": ".\\.venv\\Scripts\\python.exe -m uvicorn app.main:app --reload --port 8001",
-      "options": {
-        "cwd": "${workspaceFolder}/backend/user-service"
-      },
-      "isBackground": true,
-      "problemMatcher": []
-    },
-    {
-      "label": "Start POI Service",
-      "type": "shell",
-      "command": ".\\.venv\\Scripts\\python.exe -m uvicorn app.main:app --reload --port 8002",
-      "options": {
-        "cwd": "${workspaceFolder}/backend/poi-service"
-      },
-      "isBackground": true,
-      "problemMatcher": []
-    },
-    {
-      "label": "Start Audio Service",
-      "type": "shell",
-      "command": ".\\.venv\\Scripts\\python.exe -m uvicorn app.main:app --reload --port 8003",
-      "options": {
-        "cwd": "${workspaceFolder}/backend/audio-service"
-      },
-      "isBackground": true,
-      "problemMatcher": []
-    },
-    {
-      "label": "Start Offline Package Service",
-      "type": "shell",
-      "command": ".\\.venv\\Scripts\\python.exe -m uvicorn app.main:app --reload --port 8004",
-      "options": {
-        "cwd": "${workspaceFolder}/backend/offline-package-service"
-      },
-      "isBackground": true,
-      "problemMatcher": []
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^(.*)$",
+          "message": 1
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*",
+          "endsPattern": ".*Local:.*"
+        }
+      }
     }
   ]
 }
