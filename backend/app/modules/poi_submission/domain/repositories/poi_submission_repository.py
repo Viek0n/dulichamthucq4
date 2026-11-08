@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from app.domain.entities.poi_submission import POISubmission
+from domain.entities.poi_submission import POISubmission
 
 class POISubmissionRepository(ABC):
     @abstractmethod

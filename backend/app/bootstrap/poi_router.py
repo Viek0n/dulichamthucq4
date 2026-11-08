@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from backend.app.modules.poi.application.dto.poi_create_request import POICreateRequest
-from backend.app.modules.poi.application.dto.poi_response import POIResponse
-from backend.app.modules.poi.application.use_cases.create_poi import CreatePOI
-from backend.app.core.dependencies import get_create_poi_use_case
+from modules.poi.application.dto.poi_create_request import POICreateRequest
+from modules.poi.application.dto.poi_response import POIResponse
+from modules.poi.application.use_cases.create_poi import CreatePOI
+from core.dependencies import get_create_poi_use_case
 
 router = APIRouter(
     prefix="/pois",

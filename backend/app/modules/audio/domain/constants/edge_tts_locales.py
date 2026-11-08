@@ -1,4 +1,4 @@
-from backend.app.modules.audio.domain.enumerators.language import Language
+from modules.audio.domain.enumerators.language import Language
 
 EDGE_TTS_LOCALE: dict[Language, str] = {
     Language.ENGLISH: "en-US",

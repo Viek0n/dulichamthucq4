@@ -1,8 +1,8 @@
 from bson import ObjectId
 from pymongo.collection import Collection
 
-from backend.app.modules.poi.domain.entities.poi import POI
-from backend.app.modules.poi.domain.repositories.poi_repository import POIRepository
+from modules.poi.domain.entities.poi import POI
+from modules.poi.domain.repositories.poi_repository import POIRepository
 
 
 class MongoPOIRepository(POIRepository):

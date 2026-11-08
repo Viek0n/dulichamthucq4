@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime
 from typing import Any
-from app.domain.enumerators.review_status import ReviewStatus
+from domain.enumerators.review_status import ReviewStatus
 
 class POISubmissionResponse(BaseModel):
     slug: str

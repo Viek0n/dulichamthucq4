@@ -1,8 +1,8 @@
 from fastapi import Depends
 from pymongo.database import Database
 
-from backend.app.modules.poi.infrastructure.data.mongo import get_database
-from backend.app.modules.poi.infrastructure.data.repositories.mongo_poi_repository import (
+from app.infrastructure.database.mongo import get_database
+from app.modules.poi.infrastructure.persistence.mongo_poi_repository import (
     MongoPOIRepository,
 )
 

@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
-from backend.app.modules.audio.domain.enumerators.task_status import TaskStatus
+from modules.audio.domain.enumerators.task_status import TaskStatus
 
 @dataclass
 class AudioTask():

@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from app.domain.constants.default import TRIGGER_RADIUS
+from domain.constants.default import TRIGGER_RADIUS
 
 class POICreateRequest(BaseModel):
     slug: str = Field(min_length=1)

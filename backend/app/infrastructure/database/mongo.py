@@ -1,7 +1,7 @@
 from pymongo import MongoClient
 from pymongo.database import Database
 
-from backend.app.modules.poi.infrastructure.config import settings
+from app.core.config import settings
 
 
 client = MongoClient(settings.mongodb_uri)

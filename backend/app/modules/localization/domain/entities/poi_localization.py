@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from app.domain.enumerators.language import Language
+from domain.enumerators.language import Language
 
 @dataclass
 class POILocalization():

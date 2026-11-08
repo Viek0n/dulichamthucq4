@@ -1,8 +1,8 @@
 from bson import ObjectId
 from pymongo.collection import Collection
 
-from backend.app.modules.menu.domain.entities.menu_item import MenuItem
-from backend.app.modules.menu.domain.repositories.menu_item_repository import MenuItemRepository
+from modules.menu.domain.entities.menu_item import MenuItem
+from modules.menu.domain.repositories.menu_item_repository import MenuItemRepository
 
 class MongoMenuItemRepository(MenuItemRepository):
     def __init__(self, Collection: Collection):

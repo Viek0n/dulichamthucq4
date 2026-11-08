@@ -1,5 +1,5 @@
-from app.domain.repositories.poi_repository import POIRepository
-from app.domain.entities.poi import POI
+from domain.repositories.poi_repository import POIRepository
+from domain.entities.poi import POI
 
 class GetPOI:
     def __init__(self, repository: POIRepository):

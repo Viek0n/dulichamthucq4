@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from backend.app.modules.poi.infrastructure.data.mongo import (
+from app.infrastructure.database.mongo import (
     client,
     close_mongodb,
 )

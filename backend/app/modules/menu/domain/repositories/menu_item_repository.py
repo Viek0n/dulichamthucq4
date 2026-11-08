@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from app.domain.entities.menu_item import MenuItem
+from domain.entities.menu_item import MenuItem
 
 class MenuItemRepository(ABC):
     @abstractmethod

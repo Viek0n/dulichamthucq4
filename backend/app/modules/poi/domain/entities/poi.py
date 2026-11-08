@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from app.domain.constants.default import TRIGGER_RADIUS
+from domain.constants.default import TRIGGER_RADIUS
 
 @dataclass
 class POI:
