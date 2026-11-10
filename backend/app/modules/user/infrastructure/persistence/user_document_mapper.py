@@ -6,7 +6,6 @@ from app.modules.user.domain.entities.user import User, UserStatus
 def to_domain(document: dict) -> User:
     return User(
         id=str(document["_id"]),
-        slug=document["slug"],
         password_hash=document["password_hash"],
         is_poi_owner_verified=document["is_poi_owner_verified"],
         status=UserStatus(document["status"]),
@@ -21,7 +20,6 @@ def to_domain(document: dict) -> User:
 
 def to_document(user: User) -> dict:
     return {
-        "slug": user.slug,
         "password_hash": user.password_hash,
         "is_poi_owner_verified": user.is_poi_owner_verified,
         "status": user.status.value,

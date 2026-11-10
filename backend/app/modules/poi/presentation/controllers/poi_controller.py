@@ -14,7 +14,6 @@ router = APIRouter(prefix="/pois", tags=["POI"])
 def to_response(poi: POI) -> POIResponse:
     return POIResponse(
         id=poi.id,
-        slug=poi.slug,
         name=poi.name,
         address=poi.address,
         open_at=str(poi.open_at.time),
@@ -53,20 +52,6 @@ def get_pois(
     service: Annotated[POIService, Depends(get_poi_service)],
 ):
     return [to_response(poi) for poi in service.get_all()]
-
-
-@router.get("/slug/{slug}", response_model=POIResponse)
-def get_poi_by_slug(
-    slug: str,
-    service: Annotated[POIService, Depends(get_poi_service)],
-):
-    poi = service.get_by_slug(slug)
-    if poi is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="POI not found",
-        )
-    return to_response(poi)
 
 
 @router.get("/{poi_id}", response_model=POIResponse)

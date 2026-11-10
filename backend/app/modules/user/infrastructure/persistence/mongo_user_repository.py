@@ -23,7 +23,7 @@ class MongoUserRepository(UserRepository):
         try:
             result = self.collection.insert_one(document)
         except DuplicateKeyError as error:
-            raise UserAlreadyExists("Slug, email, or phone already exists") from error
+            raise UserAlreadyExists("Email or phone already exists") from error
         document["_id"] = result.inserted_id
         return to_domain(document)
 
@@ -33,12 +33,6 @@ class MongoUserRepository(UserRepository):
 
         document = self.collection.find_one(
             {"_id": ObjectId(user_id), "status": {"$ne": UserStatus.SOFT_DELETE.value}}
-        )
-        return to_domain(document) if document else None
-
-    def get_by_slug(self, slug: str) -> User | None:
-        document = self.collection.find_one(
-            {"slug": slug, "status": {"$ne": UserStatus.SOFT_DELETE.value}}
         )
         return to_domain(document) if document else None
 
@@ -79,7 +73,7 @@ class MongoUserRepository(UserRepository):
                 {"$set": to_document(user)},
             )
         except DuplicateKeyError as error:
-            raise UserAlreadyExists("Slug, email, or phone already exists") from error
+            raise UserAlreadyExists("Email or phone already exists") from error
         if result.matched_count == 0:
             raise UserNotFound("User not found")
 

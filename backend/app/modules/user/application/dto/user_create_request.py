@@ -8,7 +8,6 @@ from app.modules.user.domain.entities.user import UserStatus
 class UserCreateRequest(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True)
 
-    slug: str = Field(min_length=1, max_length=100)
     password: str = Field(min_length=8, max_length=72)
     is_poi_owner_verified: bool = False
     status: UserStatus = UserStatus.ACTIVE
@@ -43,7 +42,6 @@ class UserCreateRequest(BaseModel):
 class UserUpdateRequest(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True)
 
-    slug: str = Field(min_length=1, max_length=100)
     password: str | None = Field(default=None, min_length=8, max_length=72)
     is_poi_owner_verified: bool
     status: UserStatus

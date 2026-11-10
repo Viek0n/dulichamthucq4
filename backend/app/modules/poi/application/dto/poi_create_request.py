@@ -6,7 +6,6 @@ from app.modules.poi.domain.constants.parameters import TRIGGER_RADIUS
 class POICreateRequest(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True)
 
-    slug: str = Field(min_length=1)
     name: str = Field(min_length=1)
     address: str = Field(min_length=1)
 

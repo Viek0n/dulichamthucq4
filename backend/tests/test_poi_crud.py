@@ -19,7 +19,6 @@ from bson import ObjectId
 def _poi_document(poi_id: ObjectId) -> dict:
     return {
         "_id": poi_id,
-        "slug": "old-slug",
         "name": "Old name",
         "address": "Old address",
         "open_at": "08:00",
@@ -44,12 +43,10 @@ def test_poi_repository_reads_active_records_and_returns_updated_entity():
     repository = MongoPOIRepository(collection)
 
     assert repository.get_by_id(str(poi_id)).id == str(poi_id)
-    assert repository.get_by_slug("old-slug").slug == "old-slug"
     assert repository.get_all()[0].id == str(poi_id)
 
     poi = POI(
         id=str(poi_id),
-        slug="new-slug",
         name="New name",
         address="New address",
         open_at=AtTime("09:00"),
@@ -61,7 +58,7 @@ def test_poi_repository_reads_active_records_and_returns_updated_entity():
         trigger_radius=75,
         poi_owner_id=str(document["poi_owner_id"]),
     )
-    updated_document = {**document, "slug": poi.slug, "name": poi.name}
+    updated_document = {**document, "name": poi.name}
     collection.find_one.return_value = updated_document
     updated = repository.update(poi)
 
@@ -75,7 +72,6 @@ def test_poi_repository_rejects_update_for_unknown_or_deleted_poi():
     repository = MongoPOIRepository(collection)
     poi = POI(
         id=str(ObjectId()),
-        slug="slug",
         name="Name",
         address="Address",
         open_at=AtTime("09:00"),
@@ -114,7 +110,6 @@ def test_poi_service_updates_existing_poi_and_preserves_owner():
     owner_id = str(ObjectId())
     existing_poi = POI(
         id=poi_id,
-        slug="old-slug",
         name="Old name",
         address="Old address",
         open_at=AtTime("08:00"),
@@ -127,14 +122,12 @@ def test_poi_service_updates_existing_poi_and_preserves_owner():
     )
     poi_repository = MagicMock()
     poi_repository.get_by_id.return_value = existing_poi
-    poi_repository.get_by_slug.return_value = None
     poi_repository.update.side_effect = lambda poi: poi
     service = POIService(
         poi_repository,
         MagicMock(spec=MenuItemRepository),
     )
     request = POICreateRequest(
-        slug="new-slug",
         name="New name",
         address="New address",
         open_at="09:00",
@@ -147,57 +140,5 @@ def test_poi_service_updates_existing_poi_and_preserves_owner():
     updated = service.update(poi_id, request)
 
     assert updated.id == poi_id
-    assert updated.slug == "new-slug"
     assert updated.poi_owner_id == owner_id
     poi_repository.update.assert_called_once_with(updated)
-
-
-def test_poi_service_rejects_duplicate_slug_on_update():
-    poi_id = str(ObjectId())
-    existing_poi = POI(
-        id=poi_id,
-        slug="old-slug",
-        name="Old name",
-        address="Old address",
-        open_at=AtTime("08:00"),
-        close_at=AtTime("17:00"),
-        contact="123",
-        description="",
-        image="",
-        position=Coordinate(latitude=10, longitude=106),
-        poi_owner_id=str(ObjectId()),
-    )
-    duplicate_poi = POI(
-        id=str(ObjectId()),
-        slug="duplicate",
-        name="Other",
-        address="Other address",
-        open_at=AtTime("08:00"),
-        close_at=AtTime("17:00"),
-        contact="789",
-        description="",
-        image="",
-        position=Coordinate(latitude=10, longitude=106),
-        poi_owner_id=str(ObjectId()),
-    )
-    poi_repository = MagicMock()
-    poi_repository.get_by_id.return_value = existing_poi
-    poi_repository.get_by_slug.return_value = duplicate_poi
-    service = POIService(
-        poi_repository,
-        MagicMock(spec=MenuItemRepository),
-    )
-    request = POICreateRequest(
-        slug="duplicate",
-        name="New name",
-        address="New address",
-        open_at="09:00",
-        close_at="18:00",
-        contact="456",
-        latitude=11,
-        longitude=107,
-    )
-
-    with pytest.raises(ValueError, match="slug already exists"):
-        service.update(poi_id, request)
-    poi_repository.update.assert_not_called()

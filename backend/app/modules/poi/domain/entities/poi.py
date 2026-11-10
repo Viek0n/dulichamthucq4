@@ -8,7 +8,6 @@ from app.modules.poi.domain.value_objects.coordinate import Coordinate
 @dataclass
 class POI:
     id: str | None
-    slug: str
     name: str
     address: str
     open_at: AtTime

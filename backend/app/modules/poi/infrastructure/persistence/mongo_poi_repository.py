@@ -34,11 +34,6 @@ class MongoPOIRepository(POIRepository):
 
         return to_domain(document) if document else None
 
-    def get_by_slug(self, slug: str) -> POI | None:
-        document = self.collection.find_one({"slug": slug, "is_delete": False})
-
-        return to_domain(document) if document else None
-
     def get_all(self) -> list[POI]:
         documents = self.collection.find({"is_delete": False})
         return [to_domain(document) for document in documents]

@@ -7,7 +7,6 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 class RoleCreateRequest(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True)
 
-    slug: str = Field(min_length=1)
     name: str = Field(min_length=1)
     permissions: list[str]
     priority: int = Field(strict=True, ge=-(2**31), le=2**31 - 1)

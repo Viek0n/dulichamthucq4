@@ -6,7 +6,6 @@ const ownerId = ObjectId("68f000000000000000000001");
 
 const pois = [
   {
-    slug: "com-que-hoi-an",
     name: "Cơm Quê Hội An",
     address: "12 Đường Nguyễn Huệ, Hội An, Quảng Nam",
     open_at: "07:00",
@@ -20,7 +19,6 @@ const pois = [
     poi_owner_id: ownerId
   },
   {
-    slug: "pho-bo-ha-noi",
     name: "Phở Bò Hà Nội",
     address: "25 Đường Lê Lợi, Hà Nội",
     open_at: "06:00",
@@ -34,7 +32,6 @@ const pois = [
     poi_owner_id: ownerId
   },
   {
-    slug: "banh-mi-sai-gon",
     name: "Bánh Mì Sài Gòn",
     address: "18 Đường Nguyễn Trãi, TP. Hồ Chí Minh",
     open_at: "06:00",
@@ -48,7 +45,6 @@ const pois = [
     poi_owner_id: ownerId
   },
   {
-    slug: "bun-bo-hue-co-do",
     name: "Bún Bò Cố Đô",
     address: "36 Đường Trần Hưng Đạo, Huế",
     open_at: "06:30",
@@ -62,7 +58,6 @@ const pois = [
     poi_owner_id: ownerId
   },
   {
-    slug: "hai-san-da-nang",
     name: "Hải Sản Đà Nẵng",
     address: "42 Đường Võ Nguyên Giáp, Đà Nẵng",
     open_at: "10:00",

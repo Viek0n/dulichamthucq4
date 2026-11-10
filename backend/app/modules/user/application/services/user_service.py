@@ -26,8 +26,6 @@ class UserService:
         self.security = security
 
     def create(self, request: UserCreateRequest) -> User:
-        if self.user_repository.get_by_slug(request.slug):
-            raise UserAlreadyExists("User slug already exists")
         email_hash = self.security.lookup_hash(str(request.email), "email")
         if self.user_repository.get_by_email_hash(email_hash):
             raise UserAlreadyExists("Email already exists")
@@ -39,7 +37,6 @@ class UserService:
         return self.user_repository.create(
             User(
                 id=None,
-                slug=request.slug,
                 password_hash=self.security.hash_password(request.password),
                 is_poi_owner_verified=request.is_poi_owner_verified,
                 status=request.status,
@@ -63,10 +60,6 @@ class UserService:
         if existing is None:
             raise UserNotFound("User not found")
 
-        slug_owner = self.user_repository.get_by_slug(request.slug)
-        if slug_owner is not None and slug_owner.id != user_id:
-            raise UserAlreadyExists("User slug already exists")
-
         email_hash = self.security.lookup_hash(str(request.email), "email")
         email_owner = self.user_repository.get_by_email_hash(email_hash)
         if email_owner is not None and email_owner.id != user_id:
@@ -82,7 +75,6 @@ class UserService:
         return self.user_repository.update(
             User(
                 id=existing.id,
-                slug=request.slug,
                 password_hash=(
                     self.security.hash_password(request.password)
                     if request.password is not None
@@ -128,7 +120,6 @@ class UserService:
     def to_response_data(self, user: User) -> dict:
         return {
             "id": user.id,
-            "slug": user.slug,
             "is_poi_owner_verified": user.is_poi_owner_verified,
             "status": user.status,
             "name": user.name,

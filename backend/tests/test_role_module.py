@@ -17,7 +17,6 @@ def test_role_repository_round_trips_role_and_uses_object_id():
     collection.insert_one.return_value.inserted_id = role_id
     collection.find_one.return_value = {
         "_id": role_id,
-        "slug": "store-owner",
         "name": "Store owner",
         "permissions": ["poi.create", "poi.update"],
         "priority": 10,
@@ -27,7 +26,6 @@ def test_role_repository_round_trips_role_and_uses_object_id():
     created = repository.create(
         Role(
             id=None,
-            slug="store-owner",
             name="Store owner",
             permissions=["poi.create", "poi.update"],
             priority=10,
@@ -37,7 +35,6 @@ def test_role_repository_round_trips_role_and_uses_object_id():
 
     assert created == Role(
         id=str(role_id),
-        slug="store-owner",
         name="Store owner",
         permissions=["poi.create", "poi.update"],
         priority=10,
@@ -52,7 +49,6 @@ def test_role_repository_updates_and_deletes_role():
     collection.update_one.return_value.matched_count = 1
     collection.find_one.return_value = {
         "_id": role_id,
-        "slug": "admin",
         "name": "Administrator",
         "permissions": ["user.create"],
         "priority": 100,
@@ -61,7 +57,6 @@ def test_role_repository_updates_and_deletes_role():
     repository = MongoRoleRepository(collection)
     role = Role(
         id=str(role_id),
-        slug="admin",
         name="Administrator",
         permissions=["user.create"],
         priority=100,
@@ -72,7 +67,6 @@ def test_role_repository_updates_and_deletes_role():
         {"_id": role_id},
         {
             "$set": {
-                "slug": "admin",
                 "name": "Administrator",
                 "permissions": ["user.create"],
                 "priority": 100,
@@ -81,39 +75,6 @@ def test_role_repository_updates_and_deletes_role():
     )
     assert repository.delete(str(role_id)) is True
     assert repository.delete("invalid-id") is False
-
-
-def test_role_service_prevents_duplicate_slug_on_create_and_update():
-    role_repository = MagicMock()
-    service = RoleService(role_repository)
-    request = RoleCreateRequest(
-        slug="admin",
-        name="Administrator",
-        permissions=["user.create"],
-        priority=100,
-    )
-
-    role_repository.get_by_slug.return_value = Role(
-        id=str(ObjectId()),
-        slug="admin",
-        name="Administrator",
-        permissions=[],
-        priority=100,
-    )
-    with pytest.raises(ValueError, match="slug already exists"):
-        service.create(request)
-
-    existing = Role(
-        id=str(ObjectId()),
-        slug="old",
-        name="Old",
-        permissions=[],
-        priority=0,
-    )
-    role_repository.get_by_id.return_value = existing
-    with pytest.raises(ValueError, match="slug already exists"):
-        service.update(existing.id, request)
-    role_repository.update.assert_not_called()
 
 
 def test_role_repository_raises_not_found_for_missing_update():
@@ -125,7 +86,6 @@ def test_role_repository_raises_not_found_for_missing_update():
         repository.update(
             Role(
                 id=str(ObjectId()),
-                slug="admin",
                 name="Administrator",
                 permissions=[],
                 priority=100,
@@ -135,7 +95,6 @@ def test_role_repository_raises_not_found_for_missing_update():
 
 def test_role_request_accepts_only_the_fixed_permission_catalog():
     request = RoleCreateRequest(
-        slug="store-owner",
         name="Store owner",
         permissions=[
             "poi.read",
@@ -156,7 +115,6 @@ def test_role_request_accepts_only_the_fixed_permission_catalog():
 
     with pytest.raises(ValueError, match="Unknown permissions: POI_CREATE"):
         RoleCreateRequest(
-            slug="invalid",
             name="Invalid",
             permissions=["POI_CREATE"],
             priority=0,
@@ -164,7 +122,6 @@ def test_role_request_accepts_only_the_fixed_permission_catalog():
 
     with pytest.raises(ValueError, match="must not contain duplicates"):
         RoleCreateRequest(
-            slug="duplicate",
             name="Duplicate",
             permissions=["role.read", "role.read"],
             priority=0,

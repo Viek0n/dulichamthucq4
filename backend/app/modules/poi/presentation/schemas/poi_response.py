@@ -3,7 +3,6 @@ from pydantic import BaseModel
 
 class POIResponse(BaseModel):
     id: str
-    slug: str
     name: str
     address: str
     open_at: str

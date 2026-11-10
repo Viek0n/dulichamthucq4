@@ -21,10 +21,6 @@ class UserRepository(ABC):
         pass
 
     @abstractmethod
-    def get_by_slug(self, slug: str) -> User | None:
-        pass
-
-    @abstractmethod
     def get_by_email_hash(self, email_hash: str) -> User | None:
         pass
 

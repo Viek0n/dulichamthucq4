@@ -7,7 +7,6 @@ dulichamthuc.createCollection("POI", {
       bsonType: "object",
       required: [
         "_id",
-        "slug",
         "name",
         "address",
         "open_at",
@@ -21,10 +20,6 @@ dulichamthuc.createCollection("POI", {
         "poi_owner_id"
     ],
       properties: {
-        slug: {
-            bsonType: "string",
-            description: "đặt kiểu com-que-duong-bau hỗ trợ tìm kiếm và hiển thị url"
-        },
         name: {
             bsonType: "string",
             description: "tên"
@@ -90,7 +85,6 @@ dulichamthuc.createCollection("POI", {
   validationLevel: "strict",
   validationAction: "error"
 });
-dulichamthuc.POI.createIndex({ slug: 1 }, { unique: true });
 dulichamthuc.POI.createIndex({ latitude: 1, longitude: 1 });
 
 // Menu item
@@ -278,7 +272,6 @@ dulichamthuc.createCollection("admin_users", {
     $jsonSchema: {
         bsonType: 'object',
         required: [
-        'slug',
         'password_hash',
         'is_poi_owner_verified',
         'status',
@@ -290,10 +283,6 @@ dulichamthuc.createCollection("admin_users", {
         'role_id'
         ],
         properties: {
-        slug: {
-            bsonType: 'string',
-            description: 'đặt kiểu nguoi-01 hỗ trợ tìm kiếm và hiển thị url'
-        },
         password_hash: {
             bsonType: 'string',
             description: 'mật khẩu băm'
@@ -342,7 +331,6 @@ dulichamthuc.createCollection("admin_users", {
   validationAction: "error"
 });
 dulichamthuc.admin_users.createIndex({ email_lookup_hash: 1 }, { unique: true });
-dulichamthuc.admin_users.createIndex({ slug: 1 }, { unique: true });
 
 // Notification
 dulichamthuc.createCollection("owner_notifications", {
@@ -432,16 +420,11 @@ dulichamthuc.createCollection("roles", {
     $jsonSchema: {
       bsonType: "object",
       required: [
-        "slug",
         "name",
         "permissions",
         "priority"
       ],
       properties: {
-        slug:{
-            bsonType: "string",
-            description: "đặt kiểu chu-cua-hang hỗ trợ tìm kiếm và hiển thị url"
-        },
         name:{
             bsonType: "string",
             description: "tên role"
@@ -463,7 +446,6 @@ dulichamthuc.createCollection("roles", {
   validationLevel: "strict",
   validationAction: "error"
 });
-dulichamthuc.roles.createIndex({ slug: 1 }, { unique: true });
 dulichamthuc.roles.createIndex({ priority: 1 });
 
 // Audit log indexes

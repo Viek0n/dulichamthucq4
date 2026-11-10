@@ -10,7 +10,6 @@ def to_domain(document: dict) -> POI:
 
     return POI(
         id=str(document["_id"]),
-        slug=document["slug"],
         name=document["name"],
         address=document["address"],
         open_at=AtTime(document["open_at"]),
@@ -30,7 +29,6 @@ def to_domain(document: dict) -> POI:
 
 def to_document(poi: POI) -> dict:
     document = {
-        "slug": poi.slug,
         "name": poi.name,
         "address": poi.address,
         "open_at": str(poi.open_at.time),

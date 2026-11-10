@@ -26,10 +26,6 @@ class MongoRoleRepository(RoleRepository):
         document = self.collection.find_one({"_id": ObjectId(role_id)})
         return to_domain(document) if document else None
 
-    def get_by_slug(self, slug: str) -> Role | None:
-        document = self.collection.find_one({"slug": slug})
-        return to_domain(document) if document else None
-
     def get_all(self) -> list[Role]:
         return [to_domain(document) for document in self.collection.find()]
 

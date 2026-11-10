@@ -23,7 +23,3 @@ class RoleRepository(ABC):
     @abstractmethod
     def get_all(self) -> list[Role]:
         pass
-
-    @abstractmethod
-    def get_by_slug(self, slug: str) -> Role | None:
-        pass

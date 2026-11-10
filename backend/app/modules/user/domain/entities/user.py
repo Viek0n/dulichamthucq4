@@ -11,7 +11,6 @@ class UserStatus(StrEnum):
 @dataclass
 class User:
     id: str | None
-    slug: str
     password_hash: str
     is_poi_owner_verified: bool
     status: UserStatus

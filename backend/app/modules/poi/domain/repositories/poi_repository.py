@@ -23,7 +23,3 @@ class POIRepository(ABC):
     @abstractmethod
     def get_all(self) -> list[POI]:
         pass
-
-    @abstractmethod
-    def get_by_slug(self, slug: str) -> POI | None:
-        pass

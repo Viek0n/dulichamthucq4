@@ -5,7 +5,6 @@ from app.modules.user.domain.entities.user import UserStatus
 
 class UserResponse(BaseModel):
     id: str
-    slug: str
     is_poi_owner_verified: bool
     status: UserStatus
     name: str

@@ -37,7 +37,6 @@ def _security() -> UserSecurity:
 
 def _create_request(role_id: str) -> UserCreateRequest:
     return UserCreateRequest(
-        slug="user-01",
         password="a-strong-password",
         is_poi_owner_verified=False,
         name="Test User",
@@ -74,7 +73,6 @@ def test_user_document_maps_required_schema_fields():
     role_id = ObjectId()
     document = {
         "_id": user_id,
-        "slug": "user-01",
         "password_hash": "bcrypt-hash",
         "is_poi_owner_verified": False,
         "status": "ACTIVE",
@@ -89,7 +87,6 @@ def test_user_document_maps_required_schema_fields():
     user = to_domain(document)
     assert user == User(
         id=str(user_id),
-        slug="user-01",
         password_hash="bcrypt-hash",
         is_poi_owner_verified=False,
         status=UserStatus.ACTIVE,
@@ -110,7 +107,6 @@ def test_user_repository_reads_active_users_and_soft_deletes():
     role_id = ObjectId()
     document = {
         "_id": user_id,
-        "slug": "user-01",
         "password_hash": "bcrypt-hash",
         "is_poi_owner_verified": False,
         "status": "ACTIVE",
@@ -128,7 +124,6 @@ def test_user_repository_reads_active_users_and_soft_deletes():
     repository = MongoUserRepository(collection)
 
     assert repository.get_by_id(str(user_id)).id == str(user_id)
-    assert repository.get_by_slug("user-01").id == str(user_id)
     assert repository.get_by_email_hash("email-hash").id == str(user_id)
     assert repository.get_by_phone_hash("phone-hash").id == str(user_id)
     assert repository.get_all()[0].id == str(user_id)
@@ -146,13 +141,11 @@ def test_user_repository_reads_active_users_and_soft_deletes():
 def test_user_service_create_encrypts_contacts_and_preserves_no_plaintext():
     role_id = str(ObjectId())
     user_repository = MagicMock()
-    user_repository.get_by_slug.return_value = None
     user_repository.get_by_email_hash.return_value = None
     user_repository.get_by_phone_hash.return_value = None
     role_repository = MagicMock()
     role_repository.get_by_id.return_value = Role(
         id=role_id,
-        slug="admin",
         name="Admin",
         permissions=["user.create"],
         priority=10,
@@ -180,7 +173,6 @@ def test_user_service_authenticates_only_active_users():
     security = _security()
     user = User(
         id=str(ObjectId()),
-        slug="user-01",
         password_hash=security.hash_password("a-strong-password"),
         is_poi_owner_verified=False,
         status=UserStatus.ACTIVE,
@@ -232,7 +224,7 @@ def test_user_login_request_accepts_email_or_phone_in_identifier_field():
     with pytest.raises(ValueError, match="32 characters"):
         UserLoginRequest(identifier="1" * 33, password="correct-horse")
     with pytest.raises(ValueError, match="Extra inputs are not permitted"):
-        UserLoginRequest(slug="user-01", password="correct-horse")
+        UserLoginRequest(legacy_field="value", password="correct-horse")
 
 
 def test_login_controller_authenticates_email_or_phone_identifier():
@@ -260,13 +252,11 @@ def test_user_service_rejects_duplicate_contact_and_missing_role():
     user_repository = MagicMock()
     role_repository = MagicMock()
     service = UserService(user_repository, role_repository, _security())
-    user_repository.get_by_slug.return_value = None
     user_repository.get_by_email_hash.return_value = None
     user_repository.get_by_phone_hash.return_value = None
 
     user_repository.get_by_email_hash.return_value = User(
         id=str(ObjectId()),
-        slug="existing",
         password_hash="hash",
         is_poi_owner_verified=False,
         status=UserStatus.ACTIVE,
@@ -293,7 +283,6 @@ def test_user_update_omitting_password_keeps_existing_hash():
     security = _security()
     existing = User(
         id=user_id,
-        slug="user-01",
         password_hash="existing-bcrypt-hash",
         is_poi_owner_verified=False,
         status=UserStatus.ACTIVE,
@@ -306,20 +295,17 @@ def test_user_update_omitting_password_keeps_existing_hash():
     )
     user_repository = MagicMock()
     user_repository.get_by_id.return_value = existing
-    user_repository.get_by_slug.return_value = existing
     user_repository.get_by_email_hash.return_value = existing
     user_repository.get_by_phone_hash.return_value = existing
     user_repository.update.side_effect = lambda user: user
     role_repository = MagicMock()
     role_repository.get_by_id.return_value = Role(
         id=role_id,
-        slug="role",
         name="Role",
         permissions=["user.update"],
         priority=1,
     )
     request = UserUpdateRequest(
-        slug="user-01",
         is_poi_owner_verified=True,
         status=UserStatus.ACTIVE,
         name="Updated User",
@@ -339,7 +325,6 @@ def test_user_update_omitting_password_keeps_existing_hash():
 def test_user_request_rejects_invalid_email_soft_delete_and_oversized_password():
     with pytest.raises(ValueError, match="Invalid email address"):
         UserCreateRequest(
-            slug="user-01",
             password="a-strong-password",
             name="Test User",
             email="not-an-email",
@@ -349,7 +334,6 @@ def test_user_request_rejects_invalid_email_soft_delete_and_oversized_password()
 
     with pytest.raises(ValueError, match="soft-delete"):
         UserCreateRequest(
-            slug="user-01",
             password="a-strong-password",
             status=UserStatus.SOFT_DELETE,
             name="Test User",
@@ -360,7 +344,6 @@ def test_user_request_rejects_invalid_email_soft_delete_and_oversized_password()
 
     with pytest.raises(ValueError, match="72 UTF-8 bytes"):
         UserCreateRequest(
-            slug="user-01",
             password="é" * 40,
             name="Test User",
             email="test@example.com",

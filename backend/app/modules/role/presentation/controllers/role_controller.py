@@ -15,7 +15,6 @@ router = APIRouter(prefix="/roles", tags=["Roles"])
 def to_response(role: Role) -> RoleResponse:
     return RoleResponse(
         id=role.id,
-        slug=role.slug,
         name=role.name,
         permissions=role.permissions,
         priority=role.priority,
@@ -52,21 +51,6 @@ def get_roles(
     service: Annotated[RoleService, Depends(get_role_service)],
 ):
     return [to_response(role) for role in service.get_all()]
-
-
-@router.get("/slug/{slug}", response_model=RoleResponse)
-def get_role_by_slug(
-    slug: str,
-    _actor_role: Annotated[Role, Depends(require_user_permission("role.read"))],
-    service: Annotated[RoleService, Depends(get_role_service)],
-):
-    role = service.get_by_slug(slug)
-    if role is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Role not found",
-        )
-    return to_response(role)
 
 
 @router.get("/{role_id}", response_model=RoleResponse)
