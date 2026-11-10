@@ -1,87 +1,86 @@
+from app.modules.menu.domain.entities.menu_item import MenuItem
+from app.modules.menu.domain.repositories.menu_item_repository import MenuItemRepository
+from app.modules.menu.infrastructure.exceptions.menu_item_exceptions import (
+    MenuItemNotFound,
+)
 from bson import ObjectId
 from pymongo.collection import Collection
 
-from modules.menu.domain.entities.menu_item import MenuItem
-from modules.menu.domain.repositories.menu_item_repository import MenuItemRepository
 
 class MongoMenuItemRepository(MenuItemRepository):
-    def __init__(self, Collection: Collection):
-        self.Collection = Collection
+    def __init__(self, collection: Collection):
+        self.collection = collection
 
-    def create(self, menuItem: MenuItem) -> MenuItem:
+    def create(self, menu_item: MenuItem) -> MenuItem:
+        if not ObjectId.is_valid(menu_item.poi_id):
+            raise ValueError("Invalid POI id")
+
         document = {
-            "poi_id": ObjectId(menuItem.poi_id),
-            "name": menuItem.name,
-            "price": menuItem.price
+            "poi_id": ObjectId(menu_item.poi_id),
+            "name": menu_item.name,
+            "price": menu_item.price,
         }
-
         result = self.collection.insert_one(document)
         document["_id"] = result.inserted_id
-
         return self._to_entity(document)
 
-    def get_by_id(self, poi_id: str) -> POI | None:
-        if not ObjectId.is_valid(poi_id):
+    def get_by_id(self, menu_item_id: str) -> MenuItem | None:
+        if not ObjectId.is_valid(menu_item_id):
             return None
 
-        document = self.collection.find_one({
-            "_id": ObjectId(poi_id),
-            "is_delete": False,
-        })
-
+        document = self.collection.find_one({"_id": ObjectId(menu_item_id)})
         return self._to_entity(document) if document else None
 
-    def get_by_slug(self, slug: str) -> POI | None:
-        document = self.collection.find_one({
-            "slug": slug,
-            "is_delete": False,
-        })
+    def get_by_poi_id(self, poi_id: str) -> list[MenuItem]:
+        if not ObjectId.is_valid(poi_id):
+            return []
 
-        return self._to_entity(document) if document else None
+        documents = self.collection.find({"poi_id": ObjectId(poi_id)})
+        return [self._to_entity(document) for document in documents]
 
-    def update(self, poi: POI) -> POI:
-        document = {
-            "slug": poi.slug,
-            "name": poi.name,
-            "address": poi.address,
-            "open_at": poi.open_at.time,
-            "close_at": poi.close_at.time,
-            "contact": poi.contact,
-            "image": poi.image,
-            "latitude": poi.latitude,
-            "longitude": poi.longitude,
-            "trigger_radius": poi.trigger_radius,
-            "is_delete": poi.is_delete,
-            "poi_owner_id": ObjectId(poi.poi_owner_id),
-        }
+    def update(self, menu_item: MenuItem) -> MenuItem:
+        if not menu_item.id or not ObjectId.is_valid(menu_item.id):
+            raise MenuItemNotFound("Menu item not found")
+        if not ObjectId.is_valid(menu_item.poi_id):
+            raise ValueError("Invalid POI id")
 
         result = self.collection.update_one(
-            {"_id": ObjectId(poi.id)},
-            {"$set": document},
+            {"_id": ObjectId(menu_item.id)},
+            {
+                "$set": {
+                    "poi_id": ObjectId(menu_item.poi_id),
+                    "name": menu_item.name,
+                    "price": menu_item.price,
+                }
+            },
         )
-
         if result.matched_count == 0:
-            raise ValueError("POI not found")
+            raise MenuItemNotFound("Menu item not found")
 
-        updated = self.collection.find_one({"_id": ObjectId(poi.id)})
+        updated = self.collection.find_one({"_id": ObjectId(menu_item.id)})
+        if updated is None:
+            raise MenuItemNotFound("Menu item not found after update")
         return self._to_entity(updated)
 
-    def soft_delete(self, poi_id: str) -> bool:
-        if not ObjectId.is_valid(poi_id):
+    def delete(self, menu_item_id: str) -> bool:
+        if not ObjectId.is_valid(menu_item_id):
             return False
 
-        result = self.collection.update_one(
-            {"_id": ObjectId(poi_id), "is_delete": False},
-            {"$set": {"is_delete": True}},
-        )
+        result = self.collection.delete_one({"_id": ObjectId(menu_item_id)})
+        return result.deleted_count > 0
 
-        return result.modified_count > 0
+    def delete_by_poi_id(self, poi_id: str) -> int:
+        if not ObjectId.is_valid(poi_id):
+            raise ValueError("Invalid POI id")
+
+        result = self.collection.delete_many({"poi_id": ObjectId(poi_id)})
+        return result.deleted_count
 
     @staticmethod
-    def _to_entity(document: dict) -> POI:
+    def _to_entity(document: dict) -> MenuItem:
         return MenuItem(
             id=str(document["_id"]),
-            poi_id=document["poi_id"],
+            poi_id=str(document["poi_id"]),
             name=document["name"],
-            price=document["price"]
+            price=document["price"],
         )

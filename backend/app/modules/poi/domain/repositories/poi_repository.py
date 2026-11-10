@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
+
 from app.modules.poi.domain.entities.poi import POI
+
 
 class POIRepository(ABC):
     @abstractmethod
@@ -7,17 +9,17 @@ class POIRepository(ABC):
         pass
 
     @abstractmethod
-    def update(self, poi:POI) -> POI:
+    def update(self, poi: POI) -> POI:
         pass
 
     @abstractmethod
-    def soft_delete(self, poi:POI) -> bool:
+    def soft_delete(self, poi_id: str) -> bool:
         pass
 
     @abstractmethod
-    def get_by_id(self, poi:POI) -> POI | None:
+    def get_by_id(self, poi_id: str) -> POI | None:
         pass
 
     @abstractmethod
-    def get_by_slug(self, poi:POI) -> POI | None:
+    def get_by_slug(self, slug: str) -> POI | None:
         pass
