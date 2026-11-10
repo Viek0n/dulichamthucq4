@@ -6,4 +6,4 @@ class POILocalization():
     id: str
     poi_id: str
     lang: Language
-    menu: str
+    description: str

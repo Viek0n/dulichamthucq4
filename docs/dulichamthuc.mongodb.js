@@ -6,19 +6,20 @@ dulichamthuc.createCollection("POI", {
     $jsonSchema: {
       bsonType: "object",
       required: [
+        "_id",
         "slug",
         "name",
-        'address',
+        "address",
         "open_at",
         "close_at",
         "contact",
+        "description",
         "image",
-        "latitude",
-        "longitude",
+        "position",
         "trigger_radius",
         "is_delete",
         "poi_owner_id"
-      ],
+    ],
       properties: {
         slug: {
             bsonType: "string",
@@ -44,17 +45,31 @@ dulichamthuc.createCollection("POI", {
             bsonType: "string",
             description: "số điện thoại"
         },
+        description:{
+            bsonType: "string",
+            description: "mô tả"
+        },
         image:{
             bsonType: "string",
             description: "đường dẫn ảnh"
         },
-        latitude: {
-            bsonType: "double",
-            description: "vĩ độ"
-        },
-        longitude: {
-            bsonType: "double",
-            description: "kinh độ"
+        position: {
+            bsonType: "object",
+            required: ["type", "coordinates"],
+            properties: {
+                type: {
+                    enum: ["Point"]
+                },
+                coordinates: {
+                    bsonType: "array",
+                    minItems: 2,
+                    maxItems: 2,
+                    items: {
+                        bsonType: "double"
+                    }
+                }
+            },
+            description: "vị trí poi"
         },
         trigger_radius: {
             bsonType: "double",
@@ -174,7 +189,7 @@ dulichamthuc.createCollection("poi_localizations", {
       required: [
         "poi_id",
         "lang",
-        "menu"
+        "description"
       ],
       properties: {
         poi_id:{
@@ -185,7 +200,7 @@ dulichamthuc.createCollection("poi_localizations", {
             bsonType: "string",
             description: "mã ngôn ngữ"
         },
-        menu:{
+        description:{
             bsonType: "string",
             description: "menu chuyển thành văn bản"
         },
@@ -261,61 +276,66 @@ dulichamthuc.audio_tasks.createIndex({ status: 1, created_at: -1 });
 dulichamthuc.createCollection("admin_users", {
   validator: {
     $jsonSchema: {
-      bsonType: "object",
-      required: [
-        "slug",
-        "password_hash",
-        "is_poi_owner_verified",
-        "status",
-        "name",
-        "email_encrypted",
-        "email_lookup_hash",
-        "phone",
-        "role_id"
-      ],
-      properties: {
-        slug:{
-            bsonType: "string",
-            description: "đặt kiểu nguoi-01 hỗ trợ tìm kiếm và hiển thị url"
+        bsonType: 'object',
+        required: [
+        'slug',
+        'password_hash',
+        'is_poi_owner_verified',
+        'status',
+        'name',
+        'email_encrypted',
+        'email_hash',
+        'phone_encrypted',
+        'phone_hash',
+        'role_id'
+        ],
+        properties: {
+        slug: {
+            bsonType: 'string',
+            description: 'đặt kiểu nguoi-01 hỗ trợ tìm kiếm và hiển thị url'
         },
-        password_hash:{
-            bsonType: "string",
-            description: "mật khẩu băm"
+        password_hash: {
+            bsonType: 'string',
+            description: 'mật khẩu băm'
         },
-        is_poi_owner_verified:{
-            bsonType: "bool",
-            description: "đã xác minh chưa"            
+        is_poi_owner_verified: {
+            bsonType: 'bool',
+            description: 'đã xác minh chưa'
         },
-        status:{
-            bsonType: "string",
-            enum: [
-                "ACTIVE", 
-                "INACTIVE", 
-                "SOFT_DELETE"
+        status: {
+            bsonType: 'string',
+            'enum': [
+            'ACTIVE',
+            'INACTIVE',
+            'SOFT_DELETE'
             ],
-            description: ""            
+            description: ''
         },
-        name:{
-            bsonType: "string",
-            description: "tên"
+        name: {
+            bsonType: 'string',
+            description: 'tên'
         },
-        email_encrypted:{
-            bsonType: "string",
-            description: "email phải được mã hóa"
+        email_encrypted: {
+            bsonType: 'string',
+            description: 'email phải được mã hóa'
         },
-        email_lookup_hash:{
-            bsonType: "string",
-            description: "Chuỗi tìm kiếm"
+        email_hash: {
+            bsonType: 'string',
+            description: 'Chuỗi tìm kiếm'
         },
-        phone:{
-            bsonType: "string",
-            description: "sđt phải được mã hóa"
+        phone_encrypted: {
+            bsonType: 'string',
+            description: 'sđt phải được mã hóa'
         },
-        role_id:{
-            bsonType: "objectId",
-            description: "khóa ngoại tới roles"
+        phone_hash: {
+            bsonType: 'string',
+            description: 'Chuỗi tìm kiếm'
+        },
+        role_id: {
+            bsonType: 'objectId',
+            description: 'khóa ngoại tới roles'
         }
-      }
+        }
     }
   },
   validationLevel: "strict",

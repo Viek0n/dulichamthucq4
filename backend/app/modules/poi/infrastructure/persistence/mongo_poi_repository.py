@@ -1,8 +1,10 @@
 from bson import ObjectId
 from pymongo.collection import Collection
 
-from modules.poi.domain.entities.poi import POI
-from modules.poi.domain.repositories.poi_repository import POIRepository
+from app.modules.poi.domain.entities.poi import POI
+from app.modules.poi.domain.repositories.poi_repository import POIRepository
+from app.modules.poi.infrastructure.persistence.poi_document_mapper import *
+from app.modules.poi.infrastructure.exceptions.poi_exceptions import *
 
 
 class MongoPOIRepository(POIRepository):
@@ -11,25 +13,12 @@ class MongoPOIRepository(POIRepository):
         self.collection = collection
 
     def create(self, poi: POI) -> POI:
-        document = {
-            "slug": poi.slug,
-            "name": poi.name,
-            "address": poi.address,
-            "open_at": poi.open_at,
-            "close_at": poi.close_at,
-            "contact": poi.contact,
-            "image": poi.image,
-            "latitude": poi.latitude,
-            "longitude": poi.longitude,
-            "trigger_radius": poi.trigger_radius,
-            "is_delete": poi.is_delete,
-            "poi_owner_id": ObjectId(poi.poi_owner_id),
-        }
+        document = to_document(poi)
 
         result = self.collection.insert_one(document)
         document["_id"] = result.inserted_id
 
-        return self._to_entity(document)
+        return to_domain(document)
 
     def get_by_id(self, poi_id: str) -> POI | None:
         if not ObjectId.is_valid(poi_id):
@@ -40,7 +29,7 @@ class MongoPOIRepository(POIRepository):
             "is_delete": False,
         })
 
-        return self._to_entity(document) if document else None
+        return to_domain(document) if document else None
 
     def get_by_slug(self, slug: str) -> POI | None:
         document = self.collection.find_one({
@@ -48,34 +37,26 @@ class MongoPOIRepository(POIRepository):
             "is_delete": False,
         })
 
-        return self._to_entity(document) if document else None
+        return to_domain(document) if document else None
 
     def update(self, poi: POI) -> POI:
-        document = {
-            "slug": poi.slug,
-            "name": poi.name,
-            "address": poi.address,
-            "open_at": poi.open_at,
-            "close_at": poi.close_at,
-            "contact": poi.contact,
-            "image": poi.image,
-            "latitude": poi.latitude,
-            "longitude": poi.longitude,
-            "trigger_radius": poi.trigger_radius,
-            "is_delete": poi.is_delete,
-            "poi_owner_id": ObjectId(poi.poi_owner_id),
-        }
+        document = to_document(poi)
+        document.pop("_id", None)
 
         result = self.collection.update_one(
-            {"_id": ObjectId(poi.id)},
-            {"$set": document},
+            {
+                "_id": ObjectId(poi.id)
+            },
+            {
+                "$set": document
+            },
         )
 
         if result.matched_count == 0:
-            raise ValueError("POI not found")
+            raise POINotFound("Không tìm thấy")
 
         updated = self.collection.find_one({"_id": ObjectId(poi.id)})
-        return self._to_entity(updated)
+        return to_domain(self.update)
 
     def soft_delete(self, poi_id: str) -> bool:
         if not ObjectId.is_valid(poi_id):
@@ -87,21 +68,3 @@ class MongoPOIRepository(POIRepository):
         )
 
         return result.modified_count > 0
-
-    @staticmethod
-    def _to_entity(document: dict) -> POI:
-        return POI(
-            id=str(document["_id"]),
-            slug=document["slug"],
-            name=document["name"],
-            address=document.get("address", ""),
-            open_at=document["open_at"],
-            close_at=document["close_at"],
-            contact=document["contact"],
-            image=document["image"],
-            latitude=document["latitude"],
-            longitude=document["longitude"],
-            trigger_radius=document["trigger_radius"],
-            is_delete=document["is_delete"],
-            poi_owner_id=str(document["poi_owner_id"]),
-        )

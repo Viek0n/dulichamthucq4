@@ -7,6 +7,8 @@ from app.infrastructure.database.mongo import (
     close_mongodb,
 )
 
+from app.modules.poi.presentation.controllers.poi_controller import router as poi_router
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -19,3 +21,4 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
+app.include_router(poi_router, prefix="/api")

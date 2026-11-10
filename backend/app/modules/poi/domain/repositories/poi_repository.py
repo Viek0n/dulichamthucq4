@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from domain.entities.poi import POI
+from app.modules.poi.domain.entities.poi import POI
 
 class POIRepository(ABC):
     @abstractmethod
