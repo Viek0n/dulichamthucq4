@@ -13,15 +13,14 @@ from app.modules.poi.presentation.controllers.poi_controller import router as po
 from app.modules.role.presentation.controllers.role_controller import (
     router as role_router,
 )
+from app.modules.user.presentation.controllers.user_controller import (
+    router as user_router,
+)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    client.admin.command("ping")
-    print("MongoDB connected successfully")
-
     yield
-
     close_mongodb()
 
 
@@ -29,3 +28,4 @@ app = FastAPI(lifespan=lifespan)
 app.include_router(poi_router, prefix="/api")
 app.include_router(menu_item_router, prefix="/api")
 app.include_router(role_router, prefix="/api")
+app.include_router(user_router, prefix="/api")
