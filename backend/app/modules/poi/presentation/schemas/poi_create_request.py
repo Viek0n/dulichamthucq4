@@ -1,17 +1,18 @@
-from pydantic import BaseModel, Field
-
 from app.modules.poi.domain.constants.parameters import TRIGGER_RADIUS
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class POICreateRequest(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True)
+
     slug: str = Field(min_length=1)
     name: str = Field(min_length=1)
-    address: str
+    address: str = Field(min_length=1)
     open_at: str
     close_at: str
-    contact: str
+    contact: str = Field(min_length=1)
     description: str = ""
-    image: str
+    image: str = ""
 
     latitude: float = Field(ge=-90, le=90)
     longitude: float = Field(ge=-180, le=180)

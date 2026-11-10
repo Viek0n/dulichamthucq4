@@ -14,3 +14,5 @@ class POIResponse(BaseModel):
     latitude: float
     longitude: float
     trigger_radius: float
+    is_delete: bool = False
+    poi_owner_id: str

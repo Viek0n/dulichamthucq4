@@ -3,6 +3,7 @@ from typing import Annotated
 from app.core.dependencies import get_poi_service
 from app.modules.poi.application.services.poi_service import POIService
 from app.modules.poi.domain.entities.poi import POI
+from app.modules.poi.infrastructure.exceptions.poi_exceptions import POINotFound
 from app.modules.poi.presentation.schemas.poi_create_request import POICreateRequest
 from app.modules.poi.presentation.schemas.poi_response import POIResponse
 from fastapi import APIRouter, Depends, HTTPException, Response, status
@@ -44,7 +45,62 @@ def create_poi(
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=str(error),
+        ) from error
+
+
+@router.get("", response_model=list[POIResponse])
+def get_pois(
+    service: Annotated[POIService, Depends(get_poi_service)],
+):
+    return [to_response(poi) for poi in service.get_all()]
+
+
+@router.get("/slug/{slug}", response_model=POIResponse)
+def get_poi_by_slug(
+    slug: str,
+    service: Annotated[POIService, Depends(get_poi_service)],
+):
+    poi = service.get_by_slug(slug)
+    if poi is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="POI not found",
         )
+    return to_response(poi)
+
+
+@router.get("/{poi_id}", response_model=POIResponse)
+def get_poi(
+    poi_id: str,
+    service: Annotated[POIService, Depends(get_poi_service)],
+):
+    poi = service.get_by_id(poi_id)
+    if poi is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="POI not found",
+        )
+    return to_response(poi)
+
+
+@router.put("/{poi_id}", response_model=POIResponse)
+def update_poi(
+    poi_id: str,
+    request: POICreateRequest,
+    service: Annotated[POIService, Depends(get_poi_service)],
+):
+    try:
+        return to_response(service.update(poi_id, request))
+    except POINotFound as error:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(error),
+        ) from error
+    except ValueError as error:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=str(error),
+        ) from error
 
 
 @router.delete("/{poi_id}", status_code=status.HTTP_204_NO_CONTENT)

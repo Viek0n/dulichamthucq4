@@ -1,11 +1,13 @@
 from dataclasses import dataclass
+
 from app.modules.poi.domain.constants.parameters import TRIGGER_RADIUS
-from app.modules.poi.domain.value_objects.coordinate import Coordinate
 from app.modules.poi.domain.value_objects.at_time import AtTime
+from app.modules.poi.domain.value_objects.coordinate import Coordinate
+
 
 @dataclass
 class POI:
-    id: str
+    id: str | None
     slug: str
     name: str
     address: str

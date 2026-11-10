@@ -7,6 +7,10 @@ from app.modules.poi.application.services.poi_service import POIService
 from app.modules.poi.infrastructure.persistence.mongo_poi_repository import (
     MongoPOIRepository,
 )
+from app.modules.role.application.services.role_service import RoleService
+from app.modules.role.infrastructure.persistence.mongo_role_repository import (
+    MongoRoleRepository,
+)
 
 
 def get_menu_item_service() -> MenuItemService:
@@ -21,3 +25,9 @@ def get_poi_service() -> POIService:
     poi_repository = MongoPOIRepository(database["POI"])
     menu_item_repository = MongoMenuItemRepository(database["MenuItem"])
     return POIService(poi_repository, menu_item_repository)
+
+
+def get_role_service() -> RoleService:
+    database = get_database()
+    repository = MongoRoleRepository(database["roles"])
+    return RoleService(repository)
