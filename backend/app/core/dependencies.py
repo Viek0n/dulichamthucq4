@@ -13,6 +13,12 @@ from app.modules.poi.application.services.poi_service import POIService
 from app.modules.poi.infrastructure.persistence.mongo_poi_repository import (
     MongoPOIRepository,
 )
+from app.modules.registration.application.services.registration_service import (
+    RegistrationService,
+)
+from app.modules.registration.infrastructure.persistence.mongo_registration_repository import (
+    MongoRegistrationRepository,
+)
 from app.modules.role.application.services.role_service import RoleService
 from app.modules.role.domain.entities.role import Role
 from app.modules.role.infrastructure.persistence.mongo_role_repository import (
@@ -62,6 +68,15 @@ def get_user_service() -> UserService:
         role_repository=MongoRoleRepository(database["roles"]),
         security=security,
     )
+
+
+def get_registration_service() -> RegistrationService:
+    database = get_database()
+    repository = MongoRegistrationRepository(
+        database["poi_owner_registrations"]
+    )
+    return RegistrationService(repository)
+
 
 def get_current_user(
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(bearer_scheme)],

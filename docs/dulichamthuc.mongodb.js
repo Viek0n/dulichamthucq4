@@ -374,17 +374,12 @@ dulichamthuc.createCollection("poi_owner_registrations", {
     $jsonSchema: {
       bsonType: "object",
       required: [
-        "slug",
         "status",
         "admin_note",
         "sender_id",
         "reviewer_id"
       ],
       properties: {
-        slug:{
-            bsonType: "string",
-            description: ""
-        },
         status:{
             bsonType: "string",
             enum: [
@@ -413,6 +408,7 @@ dulichamthuc.createCollection("poi_owner_registrations", {
   validationAction: "error"
 });
 dulichamthuc.poi_owner_registrations.createIndex({ sender_id: 1 });
+dulichamthuc.poi_owner_registrations.createIndex({ status: 1 });
 
 // Role
 dulichamthuc.createCollection("roles", {

@@ -3,13 +3,15 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from app.infrastructure.database.mongo import (
-    client,
     close_mongodb,
 )
 from app.modules.menu.presentation.controllers.menu_item_controller import (
     router as menu_item_router,
 )
 from app.modules.poi.presentation.controllers.poi_controller import router as poi_router
+from app.modules.registration.presentation.controllers.registration_controller import (
+    router as registration_router,
+)
 from app.modules.role.presentation.controllers.role_controller import (
     router as role_router,
 )
@@ -29,3 +31,4 @@ app.include_router(poi_router, prefix="/api")
 app.include_router(menu_item_router, prefix="/api")
 app.include_router(role_router, prefix="/api")
 app.include_router(user_router, prefix="/api")
+app.include_router(registration_router, prefix="/api")
