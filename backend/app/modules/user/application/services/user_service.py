@@ -117,6 +117,21 @@ class UserService:
             return None
         return user
 
+    def change_password(
+        self,
+        user_id: str,
+        current_password: str,
+        new_password: str,
+    ) -> bool:
+        user = self.user_repository.get_by_id(user_id)
+        if user is None:
+            return False
+        if not self.security.verify_password(current_password, user.password_hash):
+            raise ValueError("Current password is incorrect")
+        user.password_hash = self.security.hash_password(new_password)
+        self.user_repository.update(user)
+        return True
+
     def to_response_data(self, user: User) -> dict:
         return {
             "id": user.id,

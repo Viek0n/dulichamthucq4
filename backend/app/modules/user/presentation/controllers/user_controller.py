@@ -76,7 +76,7 @@ def login(
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid login credentials",
+            detail="Thông tin đăng nhập không chính xác",
             headers={"WWW-Authenticate": "Bearer"},
         )
     return UserTokenResponse(access_token=service.security.create_access_token(user.id))

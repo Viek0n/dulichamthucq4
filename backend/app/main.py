@@ -18,6 +18,9 @@ from app.modules.registration.presentation.controllers.registration_controller i
 from app.modules.role.presentation.controllers.role_controller import (
     router as role_router,
 )
+from app.modules.user.presentation.controllers.auth_controller import (
+    router as admin_auth_router,
+)
 from app.modules.user.presentation.controllers.user_controller import (
     router as user_router,
 )
@@ -35,4 +38,5 @@ app.include_router(poi_submission_router, prefix="/api")
 app.include_router(menu_item_router, prefix="/api")
 app.include_router(role_router, prefix="/api")
 app.include_router(user_router, prefix="/api")
+app.include_router(admin_auth_router, prefix="/api")
 app.include_router(registration_router, prefix="/api")

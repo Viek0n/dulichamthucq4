@@ -5,6 +5,7 @@ from bson import ObjectId
 from cryptography.fernet import Fernet
 
 from app.modules.role.domain.entities.role import Role
+from app.modules.user.application.dto.auth_requests import ChangePasswordRequest
 from app.modules.user.application.dto.user_create_request import (
     UserCreateRequest,
     UserUpdateRequest,
@@ -20,6 +21,9 @@ from app.modules.user.infrastructure.persistence.user_document_mapper import (
     to_domain,
 )
 from app.modules.user.infrastructure.security.user_security import UserSecurity
+from app.modules.user.presentation.controllers.auth_controller import (
+    router as auth_router,
+)
 from app.modules.user.presentation.controllers.user_controller import (
     UserLoginRequest,
     login,
@@ -205,6 +209,58 @@ def test_user_service_authenticates_only_active_users():
     user_repository.get_by_phone_hash.return_value = inactive_user
     assert service.authenticate("test@example.com", "a-strong-password") is None
     assert service.authenticate("+1 555 0100", "a-strong-password") is None
+
+
+def test_user_service_changes_password_only_after_current_password_verifies():
+    security = _security()
+    user = User(
+        id=str(ObjectId()),
+        password_hash=security.hash_password("old-password"),
+        is_poi_owner_verified=False,
+        status=UserStatus.ACTIVE,
+        name="Test User",
+        email_encrypted=security.encrypt("test@example.com"),
+        email_hash="email-hash",
+        phone_encrypted=security.encrypt("+1 555 0100"),
+        phone_hash="phone-hash",
+        role_id=str(ObjectId()),
+    )
+    repository = MagicMock()
+    repository.get_by_id.return_value = user
+    service = UserService(repository, MagicMock(), security)
+
+    with pytest.raises(ValueError, match="Current password is incorrect"):
+        service.change_password(user.id, "wrong-password", "new-password")
+    repository.update.assert_not_called()
+
+    assert service.change_password(user.id, "old-password", "new-password")
+    repository.update.assert_called_once_with(user)
+    assert security.verify_password("new-password", user.password_hash)
+    assert not security.verify_password("old-password", user.password_hash)
+
+
+def test_change_password_request_validates_new_password_length():
+    assert ChangePasswordRequest(
+        current_password="old-password",
+        new_password="new-password",
+    ).new_password == "new-password"
+    with pytest.raises(ValueError, match="at least 8 characters"):
+        ChangePasswordRequest(
+            current_password="old-password",
+            new_password="short",
+        )
+    with pytest.raises(ValueError, match="72 UTF-8 bytes"):
+        ChangePasswordRequest(
+            current_password="old-password",
+            new_password="é" * 40,
+        )
+
+
+def test_admin_auth_routes_are_registered():
+    assert {(route.path, tuple(route.methods)) for route in auth_router.routes} == {
+        ("/admin/auth/me", ("GET",)),
+        ("/admin/auth/change-password", ("POST",)),
+    }
 
 
 def test_user_login_request_accepts_email_or_phone_in_identifier_field():
