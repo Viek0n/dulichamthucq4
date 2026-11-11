@@ -17,6 +17,7 @@ node_modules/
 dist/
 dist-ssr/
 *.local
+dev-dist/
 
 # ==============================
 # Environment files
@@ -40,6 +41,7 @@ __pycache__/
 .mypy_cache/
 .coverage
 htmlcov/
+bootstrap_admin.py
 
 # ==============================
 # Testing and build artifacts
@@ -61,5 +63,3 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
-
-bootstrap_admin.py

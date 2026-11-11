@@ -1,10 +1,27 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
+import React from 'react'
+import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
+import './index.css'
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
     <App />
-  </StrictMode>,
+  </React.StrictMode>
 )
+
+// Service Worker registration
+if ('serviceWorker' in navigator) {
+  // Check if browser supports Service Worker
+  window.addEventListener('load', () => {
+    // Execute after page is fully loaded
+    navigator.serviceWorker.register('/sw.js')
+      .then(registration => {
+        console.log('SW registered: ', registration);
+        // Registration successful
+      })
+      .catch(registrationError => {
+        console.log('SW registration failed: ', registrationError);
+        // Registration failed
+      });
+  });
+}
