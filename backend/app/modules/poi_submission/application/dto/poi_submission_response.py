@@ -1,10 +1,13 @@
-from pydantic import BaseModel
 from datetime import datetime
 from typing import Any
-from domain.enumerators.review_status import ReviewStatus
+
+from pydantic import BaseModel
+
+from app.modules.poi_submission.domain.enumerators.review_status import ReviewStatus
+
 
 class POISubmissionResponse(BaseModel):
-    slug: str
+    id: str
     proposed_change: dict[str, Any]
     submiss_at: datetime
     review_status: ReviewStatus

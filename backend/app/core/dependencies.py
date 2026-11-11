@@ -13,6 +13,12 @@ from app.modules.poi.application.services.poi_service import POIService
 from app.modules.poi.infrastructure.persistence.mongo_poi_repository import (
     MongoPOIRepository,
 )
+from app.modules.poi_submission.application.services.poi_submission_service import (
+    POISubmissionService,
+)
+from app.modules.poi_submission.infrastructure.persistence.mongo_poi_submission_repository import (
+    MongoPOISubmissionRepository,
+)
 from app.modules.registration.application.services.registration_service import (
     RegistrationService,
 )
@@ -76,6 +82,17 @@ def get_registration_service() -> RegistrationService:
         database["poi_owner_registrations"]
     )
     return RegistrationService(repository)
+
+
+def get_poi_submission_service() -> POISubmissionService:
+    database = get_database()
+    return POISubmissionService(
+        submission_repository=MongoPOISubmissionRepository(
+            database["poi_submissions"]
+        ),
+        poi_service=get_poi_service(),
+        menu_item_service=get_menu_item_service(),
+    )
 
 
 def get_current_user(

@@ -123,7 +123,6 @@ dulichamthuc.createCollection("poi_submissions", {
     $jsonSchema: {
       bsonType: "object",
       required: [
-        "slug",
         "proposed_change",
         "submiss_at",
         "review_status",
@@ -132,10 +131,6 @@ dulichamthuc.createCollection("poi_submissions", {
         "submissed_by"
       ],
       properties: {
-        slug:{
-            bsonType: "string",
-            description: "đặt kiểu poi-01 hỗ trợ tìm kiếm và hiển thị url"
-        },
         proposed_change: {
             bsonType: "object",
             description: "lưu tạm đối tượng"
@@ -173,7 +168,7 @@ dulichamthuc.createCollection("poi_submissions", {
 });
 dulichamthuc.poi_submissions.createIndex({ review_status: 1 });
 dulichamthuc.poi_submissions.createIndex({ submissed_by: 1 });
-dulichamthuc.poi_submissions.createIndex({ slug: 1 }, { unique: true });
+dulichamthuc.poi_submissions.createIndex({ for_poi: 1, submiss_at: -1 });
 
 // Localization
 dulichamthuc.createCollection("poi_localizations", {
